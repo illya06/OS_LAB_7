@@ -19,11 +19,13 @@ HANDLE threadList[MAX_THREADS];
 DWORD  threadIDList[MAX_THREADS];
 
 void creareThreads();
-void* specifyFuncData(int ammount);
+void** specifyFuncData(int ammount);
 
 int main()
 {
-    
+    void** test = specifyFuncData(3);
+    int ch = *(int*)test[0];
+    cout << "test";
 }
 
 void creareThreads() {
@@ -52,43 +54,4 @@ void creareThreads() {
             );
         }
     }
-}
-
-void* specifyFuncData(int ammount) {
-    void* retVal[3] = {NULL, NULL, NULL};
-
-    cout << "\nChoose operatin type (0 - iteration | 1 - id) : ";
-    int choise;
-    cin >> choise;
-    retVal[0] = (void*)choise;
-
-    if (choise == 0) {
-        double step,
-               left = -0.9,
-               right = -0.9 + (1.8 / ammount);
-
-
-        cout << "\nYou choose (\033[33miteration\033[0m)";
-        cout << "\nEnter tabulation step : ";
-        cin >> step;
-
-        double data[3] = { step, left, right };
-
-        retVal[1] = (void*)data;
-    }
-    else if (choise == 1) {
-        int cycles;
-
-        cout << "Enter ammount of cycles : ";
-        cin >> cycles;
-
-        retVal[2] = (void*)cycles;
-    }
-    else {
-        retVal[0] = NULL;
-        retVal[1] = NULL;
-        retVal[2] = NULL;
-    }
-
-    return retVal;
 }
