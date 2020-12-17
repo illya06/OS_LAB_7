@@ -1,20 +1,71 @@
-// OS_LAB_7.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
+#include <Windows.h>
+
+using namespace std;
+
+#define MAX_THREADS 16
+
+/*
+
+    TO DO:
+    1. create threads
+    2. make work for threads
+    3. sync em
+    4. make progress counter
+
+*/
+
+HANDLE threadList[MAX_THREADS];
+DWORD  threadIDList[MAX_THREADS];
+
+void creareThreads();
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void creareThreads() {
+    void* inputType;
+    int ammount;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    cout << "\nEnter ammount of processes (up to \033[30m"
+        << MAX_THREADS << "\033[0m) : ";
+    cin >> ammount;
+
+    cout << "\nChoose operatin type (0 - iteration | 1 - id) : ";
+    int choise;
+    cin >> choise;
+
+    if (choise == 0) {
+        double step,
+            left = -0.9,
+            right = -0.9 + (1.8 / ammount);
+
+
+        cout << "\nYou choose (\033[33miteration\033[0m)";
+        cout << "\nEnter tabulation step : ";
+        cin >> step;
+
+        double data[3] = { step, left, right };
+    }
+
+
+    //Creation
+    for (int i = 0; i < ammount; i++) {
+        threadList[i] = CreateThread(
+            NULL,
+            0,
+            NULL,
+            NULL,
+            CREATE_SUSPENDED,
+            &threadIDList[i]
+        );
+        if (threadList[i] == NULL) {
+            printf(
+                "\n\033[32mERROR\033[0m Could`n create thread (%d)",
+                GetLastError()
+            );
+        }
+    }
+}
