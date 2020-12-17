@@ -32,7 +32,8 @@ DWORD WINAPI idPrint(LPVOID data);
 
 int main()
 {
-    
+    int n = ammountOfThreads();
+    createThreads(n);
 }
 
 int choise(){
@@ -67,7 +68,8 @@ int ammountOfThreads() {
     else
         return 0;
 }
-        
+ 
+//Creating threads
 void createThreads(int ammount) {
     int ch = choise();
     
@@ -114,7 +116,7 @@ void createThreadA_Iter(void* data, int num) {
         0,
         iteration,
         data,
-        CREATE_SUSPENDED,
+        NULL,
         &threadIDList[num]
     );
     if (threadList[num] == NULL) {
@@ -132,7 +134,7 @@ void createThreadB_Id(void* data, int num) {
         0,
         idPrint,
         data,
-        CREATE_SUSPENDED,
+        NULL,
         &threadIDList[num]
     );
     if (threadList[num] == NULL) {
