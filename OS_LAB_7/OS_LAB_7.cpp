@@ -18,12 +18,41 @@ using namespace std;
 HANDLE threadList[MAX_THREADS];
 DWORD  threadIDList[MAX_THREADS];
 
+int  choise();
 int  ammountOfThreads();
-void createThreadWithData(void* data, int num);
+
+void createThreads(int ammount);
+
+void createThreadA_Iter(void* data, int num);
+void createThreadB_Id(void* data, int num);
+
+DWORD WINAPI iteration(LPVOID data);
+DWORD WINAPI idPrint(LPVOID data);
+
 
 int main()
 {
     
+}
+
+int choise(){
+    int ch;
+    cout << "\nChoose operation type"
+        << " (\033[33m0\033[0m - Iteration | \033[33m1\033[0m - Id) : ";
+    cin >> ch;
+
+    if (ch == 0) {
+        cout << "\nYou choose (\033[33m0\033[0m | iteration)";
+        return 0;
+    }
+
+    if (ch == 1) {
+        cout << "\nYou choose (\033[33m1\033[0m | id)";
+        return 1;
+    }
+
+    cout << "\nWrong input\n\n";
+    return -1;
 }
 
 int ammountOfThreads() {
@@ -38,12 +67,52 @@ int ammountOfThreads() {
     else
         return 0;
 }
+        
+void createThreads(int ammount) {
+    int ch = choise();
+    
+    if (ch == -1) {
+        return;
+    }
 
-void createThreadWithData(void* data, int num) {
+    if (ch == 0) {
+        double step, 
+               left  = -0.9, 
+               right = -0.9 + (1.8 / ammount);
+
+        cout << "\n Enter iteration step : ";
+        cin >> step;
+
+        double data[3] = { step, left, right };
+
+        for (int i = 0; i < ammount; i++) {
+            createThreadA_Iter(&data, i);
+
+            data[1] = data[1] + (1.8 / ammount);
+            data[2] = data[2] + (1.8 / ammount);
+        }
+    }
+
+    if (ch == 1) {
+        int cycles;
+        cout << "\n Enter ammoun of cycles : ";
+        cin >> cycles;
+        cycles /= ammount;
+
+        for (int i = 0; i < ammount; i++) {
+            createThreadB_Id(&cycles, i);            
+        }
+    }
+    
+}
+
+
+//Thread funcs
+void createThreadA_Iter(void* data, int num) {
     threadList[num] = CreateThread(
         NULL,
         0,
-        NULL,
+        iteration,
         data,
         CREATE_SUSPENDED,
         &threadIDList[num]
@@ -53,7 +122,49 @@ void createThreadWithData(void* data, int num) {
             "\n\033[32mERROR\033[0m Could`n create thread (%d)",
             GetLastError()
         );
+        ExitProcess(3);
     }
 }
-        
 
+void createThreadB_Id(void* data, int num) {
+    threadList[num] = CreateThread(
+        NULL,
+        0,
+        idPrint,
+        data,
+        CREATE_SUSPENDED,
+        &threadIDList[num]
+    );
+    if (threadList[num] == NULL) {
+        printf(
+            "\n\033[32mERROR\033[0m Could`n create thread (%d)",
+            GetLastError()
+        );
+        ExitProcess(3);
+    }
+}
+
+//Thread work functions
+DWORD WINAPI iteration(LPVOID data) {
+    double* arr = (double*)data;
+    double step = arr[0], left = arr[1], right = arr[2];
+    printf("\n (\033[32m%d\033[0m) Parameters: \n  step  :\033[33m %+.4f \033[0m \n  left  :\033[33m %+.4f \033[0m  \n  right :\033[33m %+.4f \033[0m\n", GetCurrentThreadId(), step, left, right);
+    double x;
+    Sleep(10);
+    for (double i = left; i < right; i += step) {
+        x = 1 + i / 3 - i * i / 9 + i * i * i * 5 / 81 - i * i * i * i * 80 / 1944;
+        printf("\n \033[36m %d\033[0m -> X: %+.4f | Y: %+.4f ", GetCurrentThreadId(), i, x);
+    }
+    printf("\n\n (\033[32m%d\033[0m) FINISHED!\n", GetCurrentThreadId());
+    return 0;
+}
+
+DWORD WINAPI idPrint(LPVOID data) {
+    int n = (int)data;
+    Sleep(10);
+    for (double i = 0; i < n; i++) {
+        printf("\n \033[36m %d\033[0m -> Shevcuk Illia #001244012 ", GetCurrentThreadId());
+    }
+    printf("\n\n (\033[32m%d\033[0m) FINISHED!\n", GetCurrentThreadId());
+    return 0;
+}
