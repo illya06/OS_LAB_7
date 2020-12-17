@@ -37,6 +37,7 @@ int main()
     int n = ammountOfThreads();
     createThreads(n);
 
+    Sleep(1);
     auto start = std::chrono::steady_clock::now();
     
     //HERE`LL BE TIME
