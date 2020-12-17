@@ -30,13 +30,25 @@ void createThreadB_Id(void* data, int num);
 DWORD WINAPI iteration(LPVOID data);
 DWORD WINAPI idPrint(LPVOID data);
 
+//variable for syncing
+int progres = 0;
+
+//syncing 
+CRITICAL_SECTION CriticalSection;
+
 
 int main()
 {
     int n = ammountOfThreads();
+
+    if (!InitializeCriticalSectionAndSpinCount(&CriticalSection,
+        0x00000400))
+        return -1;
     createThreads(n);
 
     WaitForMultipleObjects(n, threadList, TRUE, INFINITE);
+
+    DeleteCriticalSection(&CriticalSection);
 
     closeHandles(n);
 }
@@ -73,7 +85,7 @@ int ammountOfThreads() {
     else
         return 0;
 }
- 
+
 //Creating threads
 void createThreads(int ammount) {
     int ch = choise();
@@ -159,14 +171,20 @@ void closeHandles(int ammount) {
 
 //Thread work functions
 DWORD WINAPI iteration(LPVOID data) {
+
     double* arr = (double*)data;
     double step = arr[0], left = arr[1], right = arr[2];
     printf("\n (\033[32m%d\033[0m) Parameters: \n  step  :\033[33m %+.4f \033[0m \n  left  :\033[33m %+.4f \033[0m  \n  right :\033[33m %+.4f \033[0m\n", GetCurrentThreadId(), step, left, right);
     double x;
     Sleep(10);
     for (double i = left; i < right; i += step) {
-        x = 1 + i / 3 - i * i / 9 + i * i * i * 5 / 81 - i * i * i * i * 80 / 1944;
-        printf("\n \033[36m %d\033[0m -> X: %+.4f | Y: %+.4f ", GetCurrentThreadId(), i, x);
+        EnterCriticalSection(&CriticalSection);
+            progres++;
+            cout << "\n" << progres << "% | ";
+            x = 1 + i / 3 - i * i / 9 + i * i * i * 5 / 81 - i * i * i * i * 80 / 1944;
+            printf("\033[36m %d\033[0m -> X: %+.4f | Y: %+.4f ", GetCurrentThreadId(), i, x);
+        LeaveCriticalSection(&CriticalSection);
+
     }
     printf("\n\n (\033[32m%d\033[0m) FINISHED!\n", GetCurrentThreadId());
     return 0;
