@@ -35,10 +35,11 @@ int main()
 {
     int n = ammountOfThreads();
     createThreads(n);
-
+    
+    //HERE`LL BE TIME
     WaitForMultipleObjects(n, threadList, TRUE, INFINITE);
-
     closeHandles(n);
+
 }
 
 int choise(){
