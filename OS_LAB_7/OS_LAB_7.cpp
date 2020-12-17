@@ -32,6 +32,7 @@ DWORD WINAPI idPrint(LPVOID data);
 
 //variable for syncing
 int progres = 0;
+int ammForProgress = 0;
 
 //syncing Critical
 CRITICAL_SECTION CriticalSection;
@@ -80,7 +81,6 @@ int choise(){
 
 int ammountOfThreads() {
     int ammount;
-
     cout << "\nEnter ammount of processes (up to \033[30m"
         << MAX_THREADS << "\033[0m) : ";
     cin >> ammount;
@@ -107,6 +107,8 @@ void createThreads(int ammount) {
         cout << "\n Enter iteration step : ";
         cin >> step;
 
+        ammForProgress = ammount*step;
+
         double data[3] = { step, left, right };
 
         for (int i = 0; i < ammount; i++) {
@@ -122,6 +124,7 @@ void createThreads(int ammount) {
         cout << "\n Enter ammoun of cycles : ";
         cin >> cycles;
         cycles /= ammount;
+        ammForProgress = ammount * cycles;
 
         for (int i = 0; i < ammount; i++) {
             createThreadB_Id(&cycles, i);            
@@ -199,7 +202,8 @@ DWORD WINAPI idPrint(LPVOID data) {
     for (int i = 0; i < n; i++) {
         WaitForSingleObject(Mutex, INFINITE);
         progres++;
-        cout << "\n" << progres << "% | ";
+        double percent = progres * (100.0 / (double)ammForProgress);
+        cout << "\n" << percent << "% | ";
         cout<<"\033[36m "<< GetCurrentThreadId()<<"\033[0m -> Shevcuk Illia #001244012 ";
         ReleaseMutex(Mutex);
     }
