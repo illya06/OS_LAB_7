@@ -33,17 +33,22 @@ DWORD WINAPI idPrint(LPVOID data);
 //variable for syncing
 int progres = 0;
 
-//syncing 
+//syncing Critical
 CRITICAL_SECTION CriticalSection;
-
+//syncing Mutex
+HANDLE Mutex = NULL;
 
 int main()
 {
     int n = ammountOfThreads();
 
+    //initializing Critical section
     if (!InitializeCriticalSectionAndSpinCount(&CriticalSection,
         0x00000400))
         return -1;
+    //initializing Mutex
+    Mutex = CreateMutex(NULL, FALSE, L"lock");
+
     createThreads(n);
 
     WaitForMultipleObjects(n, threadList, TRUE, INFINITE);
@@ -190,9 +195,8 @@ DWORD WINAPI iteration(LPVOID data) {
 }
 
 DWORD WINAPI idPrint(LPVOID data) {
-    int n = (int)data;
-    Sleep(10);
-    for (double i = 0; i < n; i++) {
+    int n = *(int*)data;
+    for (int i = 0; i < n; i++) {
         printf("\n \033[36m %d\033[0m -> Shevcuk Illia #001244012 ", GetCurrentThreadId());
     }
     printf("\n\n (\033[32m%d\033[0m) FINISHED!\n", GetCurrentThreadId());
