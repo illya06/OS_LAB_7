@@ -22,6 +22,7 @@ int  choise();
 int  ammountOfThreads();
 
 void createThreads(int ammount);
+void closeHandles(int ammount);
 
 void createThreadA_Iter(void* data, int num);
 void createThreadB_Id(void* data, int num);
@@ -34,6 +35,10 @@ int main()
 {
     int n = ammountOfThreads();
     createThreads(n);
+
+    WaitForMultipleObjects(n, threadList, TRUE, INFINITE);
+
+    closeHandles(n);
 }
 
 int choise(){
@@ -143,6 +148,12 @@ void createThreadB_Id(void* data, int num) {
             GetLastError()
         );
         ExitProcess(3);
+    }
+}
+
+void closeHandles(int ammount) {
+    for (int i = 0; i < ammount; i++) {
+        CloseHandle(threadList[i]);
     }
 }
 
