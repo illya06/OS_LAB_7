@@ -32,7 +32,7 @@ DWORD WINAPI idPrint(LPVOID data);
 
 //variable for syncing
 int progres = 0;
-int ammForProgress = 0;
+double ammForProgress = 0;
 
 //syncing Critical
 CRITICAL_SECTION CriticalSection;
@@ -107,7 +107,9 @@ void createThreads(int ammount) {
         cout << "\n Enter iteration step : ";
         cin >> step;
 
-        ammForProgress = ammount*step;
+        for (double i = left; i <= 0.9; i += step) {
+            ammForProgress+=1.0;
+        }
 
         double data[3] = { step, left, right };
 
@@ -124,7 +126,7 @@ void createThreads(int ammount) {
         cout << "\n Enter ammoun of cycles : ";
         cin >> cycles;
         cycles /= ammount;
-        ammForProgress = ammount * cycles;
+        ammForProgress = (double)ammount * (double)cycles;
 
         for (int i = 0; i < ammount; i++) {
             createThreadB_Id(&cycles, i);            
@@ -188,7 +190,8 @@ DWORD WINAPI iteration(LPVOID data) {
     for (double i = left; i < right; i += step) {
         EnterCriticalSection(&CriticalSection);
             progres++;
-            cout << "\n" << progres << "% | ";
+            double percent = progres * 100 / ammForProgress;
+            cout << "\n" << percent << "% | ";
             x = 1 + i / 3 - i * i / 9 + i * i * i * 5 / 81 - i * i * i * i * 80 / 1944;
             printf("\033[36m %d\033[0m -> X: %+.4f | Y: %+.4f ", GetCurrentThreadId(), i, x);
         LeaveCriticalSection(&CriticalSection);
