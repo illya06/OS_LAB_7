@@ -184,7 +184,6 @@ DWORD WINAPI iteration(LPVOID data) {
             x = 1 + i / 3 - i * i / 9 + i * i * i * 5 / 81 - i * i * i * i * 80 / 1944;
             printf("\033[36m %d\033[0m -> X: %+.4f | Y: %+.4f ", GetCurrentThreadId(), i, x);
         LeaveCriticalSection(&CriticalSection);
-
     }
     printf("\n\n (\033[32m%d\033[0m) FINISHED!\n", GetCurrentThreadId());
     return 0;
