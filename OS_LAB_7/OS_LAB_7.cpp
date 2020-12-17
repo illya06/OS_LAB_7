@@ -197,7 +197,11 @@ DWORD WINAPI iteration(LPVOID data) {
 DWORD WINAPI idPrint(LPVOID data) {
     int n = *(int*)data;
     for (int i = 0; i < n; i++) {
-        printf("\n \033[36m %d\033[0m -> Shevcuk Illia #001244012 ", GetCurrentThreadId());
+        WaitForSingleObject(Mutex, INFINITE);
+        progres++;
+        cout << "\n" << progres << "% | ";
+        cout<<"\033[36m "<< GetCurrentThreadId()<<"\033[0m -> Shevcuk Illia #001244012 ";
+        ReleaseMutex(Mutex);
     }
     printf("\n\n (\033[32m%d\033[0m) FINISHED!\n", GetCurrentThreadId());
     return 0;
