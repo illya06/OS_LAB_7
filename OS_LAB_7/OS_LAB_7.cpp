@@ -1,5 +1,6 @@
 #include <iostream>
 #include <Windows.h>
+#include <chrono>
 
 using namespace std;
 
@@ -52,7 +53,15 @@ int main()
 
     createThreads(n);
 
+   /* Sleep(100);
+    auto start = std::chrono::steady_clock::now();*/
+    
+    //HERE`LL BE TIME
     WaitForMultipleObjects(n, threadList, TRUE, INFINITE);
+
+    /*auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    cout << endl << endl << "TIME PASSED : " << elapsed_seconds.count() << endl;*/
 
     DeleteCriticalSection(&CriticalSection);
 
